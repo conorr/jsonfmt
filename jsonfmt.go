@@ -21,26 +21,26 @@ func main() {
     filename := os.Args[1]
 
     // read file
-    in, err := ioutil.ReadFile(filename)
+    contents, err := ioutil.ReadFile(filename)
     if (err != nil) {
         log.Fatal(err)
         return
     }
 
-    isJSONP := parseJSONP(in)
-
-    if (isJSONP == nil) {
-        printJSON(in)
+    // check if it's jsonp and print accordlingly
+    isJSONP, parts := parseJSONP(contents)
+    if (!isJSONP) {
+        // regular json
+        printFormattedJSON(contents)
     } else {
-        fmt.Print(string(isJSONP[1]))
-        printJSON(isJSONP[2])
-        fmt.Print(string(isJSONP[3]))
+        // jsonp
+        fmt.Print(string(parts[1]))
+        printFormattedJSON(parts[2])
+        fmt.Print(string(parts[3]) + "\n")
     }
-    fmt.Print("\n")
-
 }
 
-func printJSON(jsonstr []byte) {
+func printFormattedJSON(jsonstr []byte) {
     out := bytes.NewBufferString("")
     if err := json.Indent(out, jsonstr, "", "\t"); err == nil {
         io.Copy(os.Stdout, out)
@@ -49,13 +49,13 @@ func printJSON(jsonstr []byte) {
     }
 }
 
-func parseJSONP(str []byte) [][]byte {
+func parseJSONP(str []byte) (bool, [][]byte) {
     re, _ := regexp.Compile(`^([A-Za-z_0-9\.]+\()(.*)(\))$`)
     matches := re.FindAllSubmatch(str, -1)
     if (matches == nil) {
-        return nil
+        return false, nil
     } else if (len(matches[0]) != 4) {
         log.Fatal("Bad JSON!")
     }
-    return matches[0]
+    return true, matches[0]
 }
