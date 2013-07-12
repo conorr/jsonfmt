@@ -3,7 +3,6 @@ package main
 import (
     "bytes"
     "encoding/json"
-    "io"
     "io/ioutil"
     "os"
     "log"
@@ -27,31 +26,30 @@ func main() {
         return
     }
 
-    // check if it's jsonp and print accordlingly
-    isJSONP, parts := parseJSONP(contents)
-    if (!isJSONP) {
-        // regular json
-        printFormattedJSON(contents)
-    } else {
-        // jsonp
+    // check if it's jsonp and handle accordingly
+    if check, parts := isJSONP(contents); check == true {
+        // handle jsonp
         fmt.Print(string(parts[1]))
         printFormattedJSON(parts[2])
         fmt.Print(string(parts[3]) + "\n")
+    } else {
+        // handle regular json
+        printFormattedJSON(contents)
     }
 }
 
-func printFormattedJSON(jsonstr []byte) {
+func printFormattedJSON(contents []byte) {
     out := bytes.NewBufferString("")
-    if err := json.Indent(out, jsonstr, "", "\t"); err == nil {
-        io.Copy(os.Stdout, out)
+    if err := json.Indent(formatted, contents, "", "\t"); err == nil {
+        fmt.Print(formatted.String())
     } else {
         log.Fatal(err)
     }
 }
 
-func parseJSONP(str []byte) (bool, [][]byte) {
+func isJSONP(contents []byte) (bool, [][]byte) {
     re, _ := regexp.Compile(`^([A-Za-z_0-9\.]+\()(.*)(\))$`)
-    matches := re.FindAllSubmatch(str, -1)
+    matches := re.FindAllSubmatch(contents, -1)
     if (matches == nil) {
         return false, nil
     } else if (len(matches[0]) != 4) {
