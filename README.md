@@ -4,8 +4,6 @@ jsonfmt
 JSON formatter utility
 ----
 
-###Introduction
-
 `jsonfmt` takes a file containing JSON data and outputs a formatted, readable version to stdout, where it can be grepped, piped to another file, etc. This is especially useful for minified JSON files.
 
 ```
@@ -25,7 +23,6 @@ $jsonfmt example.json
     ]
 }
 ```
-###JSONP
 
 `jsonfmt` can also handle files containing JSONP, such as a REST API response saved to a file. A JSONP response is wrapped in a callback and, though it is valid JavaScript, it is not valid JSON. However `jsonfmt` automatically detects JSONP and handles it accordingly:
 
