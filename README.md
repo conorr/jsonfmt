@@ -24,7 +24,7 @@ $jsonfmt example.json
 }
 ```
 
-`jsonfmt` can also handle files containing JSONP, such as a REST API response saved to a file. A JSONP response is wrapped in a callback and, though it is valid JavaScript, it is not valid JSON. However `jsonfmt` automatically detects JSONP and handles it accordingly:
+`jsonfmt` can also handle files containing JSONP. This could be a REST API response saved to a file, such as a large dataset you want to inspect. A JSONP response is wrapped in a callback and, though it is valid JavaScript, it is not valid JSON. However `jsonfmt` automatically detects JSONP and handles it accordingly:
 
 ```
 $cat example.js
