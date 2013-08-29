@@ -40,7 +40,7 @@ func main() {
 
 func printFormattedJSON(contents []byte) {
     formatted := bytes.NewBufferString("")
-    if err := json.Indent(formatted, contents, "", "\t"); err == nil {
+    if err := json.Indent(formatted, contents, "", "    "); err == nil {
         fmt.Print(formatted.String())
     } else {
         log.Fatal(err)
