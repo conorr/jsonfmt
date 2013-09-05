@@ -1,7 +1,7 @@
 jsonfmt
 =======
 
-JSON formatter utility
+JSON formatting utility
 ----
 
 `jsonfmt` takes a file containing JSON data and outputs a formatted, readable version to stdout, where it can be grepped, piped to another file, etc. This is especially useful for minified JSON files.
