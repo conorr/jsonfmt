@@ -1,7 +1,7 @@
 jsonfmt
 =======
 
-JSON formatter utility
+JSON formatting utility
 ----
 
 `jsonfmt` takes a file containing JSON data and formats it.
