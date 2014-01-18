@@ -21,7 +21,7 @@ func main() {
 
     // Parse args.
     if (len(os.Args) < 2) {
-        fmt.Println("Usage: jsonfmt <json-file>");
+        fmt.Println("Usage: jsonfmt [file]");
         return
     }
     filename := os.Args[1]
