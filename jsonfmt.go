@@ -13,8 +13,11 @@ import (
 
 func main() {
 
-    var head bytes.Buffer
-    var body bytes.Buffer
+    var (
+        head bytes.Buffer
+        body bytes.Buffer
+        tail bytes.Buffer
+    )
 
     // Parse args.
     if (len(os.Args) < 2) {
@@ -43,16 +46,15 @@ func main() {
 
     // Try parsing JSONP.
     if parts, err := parseJSONP(body.Bytes()); err == nil {
-        fmt.Println("is jsonp!")
         head.Write(parts[0])
         body.Reset()
         body.Write(parts[1])
+        tail.Write(parts[2])
     }
 
     // Make a new buffer of indented JSON.
-    cleanJSON := bytes.NewBufferString("")
-
-    err = json.Indent(cleanJSON, body.Bytes(), "", "    ")
+    bodyIndented := bytes.NewBufferString("")
+    err = json.Indent(bodyIndented, body.Bytes(), "", "    ")
     if err != nil {
         if serr, ok := err.(*json.SyntaxError); ok {
             fmt.Printf("Syntax error at byte %d: %s\n", serr.Offset, serr.Error())
@@ -67,31 +69,23 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
-    // If JSONP, add padding back in.
-    // TODO: need the if?
-    if len(head.Bytes()) > 0 {
-        fo.Write(head.Bytes())
-        //fo.Write([]byte("("))
-    }
-    fo.Write(cleanJSON.Bytes())
-    //if len(head.Bytes()) > 0 {
-        //fo.Write([]byte(")\n"))
-    //}
+    fo.Write(head.Bytes())
+    fo.Write(bodyIndented.Bytes())
+    fo.Write(tail.Bytes())
     fo.Close()
 }
 
 func parseJSONP(contents []byte) ([][]byte, error) {
-    //s := string(contents)
-    //fmt.Println(s)
-    re, _ := regexp.Compile("^([A-Za-z_0-9.]+)[(](.*)[)]([\n]|)$")
+    re, _ := regexp.Compile("^([A-Za-z_0-9.]+[(]{1})(.*)([)]|[)][\n]+)$")
     matches := re.FindAllSubmatch(contents, -1)
     if len(matches) == 0 {
+        fmt.Println("case 1")
         return nil, errors.New("Could not parse into JSONP")
     }
     parts := matches[0]
     if len(parts) < 3 {
+        fmt.Println("case 2")
         return nil, errors.New("Could not parse into JSONP")
     }
-    //return nil, nil
     return parts[1:], nil
 }
