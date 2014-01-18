@@ -12,6 +12,7 @@ import (
 )
 
 const READBYTES int = 1024
+const JSONP_RE string = "^([\n]?[A-Za-z_0-9.]+[(]{1})(.*)([)]|[)][\n]+)$"
 
 func main() {
 
@@ -78,7 +79,7 @@ func main() {
 }
 
 func ParseJSONP(contents []byte) ([][]byte, error) {
-    re, _ := regexp.Compile("^([\n]?[A-Za-z_0-9.]+[(]{1})(.*)([)]|[)][\n]+)$")
+    re, _ := regexp.Compile(JSONP_RE)
     matches := re.FindAllSubmatch(contents, -1)
     if len(matches) == 0 {
         return nil, errors.New("Could not parse into JSONP")
