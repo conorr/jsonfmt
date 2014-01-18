@@ -47,7 +47,7 @@ func main() {
     fi.Close()
 
     // Try parsing JSONP.
-    if parts, err := parseJSONP(body.Bytes()); err == nil {
+    if parts, err := ParseJSONP(body.Bytes()); err == nil {
         head.Write(parts[0])
         body.Reset()
         body.Write(parts[1])
@@ -77,7 +77,7 @@ func main() {
     fo.Close()
 }
 
-func parseJSONP(contents []byte) ([][]byte, error) {
+func ParseJSONP(contents []byte) ([][]byte, error) {
     re, _ := regexp.Compile("^[\n]?([A-Za-z_0-9.]+[(]{1})(.*)([)]|[)][\n]+)$")
     matches := re.FindAllSubmatch(contents, -1)
     if len(matches) == 0 {
