@@ -11,6 +11,8 @@ import (
     "encoding/json"
 )
 
+const READBYTES int = 1024
+
 func main() {
 
     var (
@@ -31,7 +33,7 @@ func main() {
     if err != nil {
         log.Fatal(err)
     }
-    data := make([]byte, 1024)
+    data := make([]byte, READBYTES)
     for {
         n, err := fi.Read(data)
         if err != nil && err != io.EOF {
