@@ -79,12 +79,10 @@ func parseJSONP(contents []byte) ([][]byte, error) {
     re, _ := regexp.Compile("^([A-Za-z_0-9.]+[(]{1})(.*)([)]|[)][\n]+)$")
     matches := re.FindAllSubmatch(contents, -1)
     if len(matches) == 0 {
-        fmt.Println("case 1")
         return nil, errors.New("Could not parse into JSONP")
     }
     parts := matches[0]
     if len(parts) < 3 {
-        fmt.Println("case 2")
         return nil, errors.New("Could not parse into JSONP")
     }
     return parts[1:], nil
