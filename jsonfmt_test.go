@@ -1,7 +1,11 @@
 package main
 
-import "testing"
-import "bytes"
+import (
+    "testing"
+    "bytes"
+)
+
+
 
 func TestParseJSONP1(t *testing.T) {
 
@@ -46,7 +50,7 @@ func TestParseJSONP3(t *testing.T) {
     }
 }
 
-func TestRawInterface(t *testing.T) {
+func TestRawInterfaceMap(t *testing.T) {
 
     // Tests
     tests := make(map[string]interface{})
@@ -55,10 +59,21 @@ func TestRawInterface(t *testing.T) {
     tests["{\"foo\":3.14}"] = 3.14
 
     for test, expect := range tests {
-        result := RawInterface([]byte(test))
+        result, _ := RawInterfaceMap([]byte(test))
         if result["foo"] != expect {
             t.Errorf("Expected %s, got %s", expect, result["foo"])
         }
+    }
+
+}
+
+func TestRawInterfaceMapErrors(t *testing.T) {
+
+    test := []byte("{\"foo\":\"bar}")
+    _, err := RawInterfaceMap(test)
+
+    if err == nil {
+        t.Errorf("Expected error due to bad syntax")
     }
 
 }
