@@ -2,6 +2,8 @@ package main
 
 import "testing"
 import "bytes"
+import "encoding/json"
+import "log"
 
 func TestParseJSONP1(t *testing.T) {
 
@@ -43,5 +45,40 @@ func TestParseJSONP3(t *testing.T) {
                 t.Errorf("Expected %s, got %s", expect[i], string(result[i]))
             }
         }
+    }
+}
+
+func TestTransform1(t *testing.T) {
+
+    //jsonBytes := []byte("{\"foo\":2,\"bar\":\"barbar\",\"floaty\":5.0,\"x\":{\"a\":5,\"b\":{\"foo\":\"bar\"}}}")
+    jsonBytes := []byte("{\"foo\":\"bar\"}")
+
+    obj := make(map[string]json.RawMessage)
+    err := json.Unmarshal(jsonBytes, &obj)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    result := Transform(obj)
+
+    if result["foo"] != "bar" {
+        t.Error()
+    }
+}
+
+func TestTransform2(t *testing.T) {
+
+    jsonBytes := []byte("{\"foo\":2}")
+
+    obj := make(map[string]json.RawMessage)
+    err := json.Unmarshal(jsonBytes, &obj)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    result := Transform(obj)
+
+    if result["foo"] != 2 {
+        t.Error()
     }
 }
