@@ -2,9 +2,6 @@ package main
 
 import "testing"
 import "bytes"
-import "encoding/json"
-import "log"
-//import "fmt"
 
 func TestParseJSONP1(t *testing.T) {
 
@@ -49,25 +46,7 @@ func TestParseJSONP3(t *testing.T) {
     }
 }
 
-func TestTransform1(t *testing.T) {
-
-    //jsonBytes := []byte("{\"foo\":2,\"bar\":\"barbar\",\"floaty\":5.0,\"x\":{\"a\":5,\"b\":{\"foo\":\"bar\"}}}")
-    jsonBytes := []byte("{\"foo\":\"bar\"}")
-
-    obj := make(map[string]json.RawMessage)
-    err := json.Unmarshal(jsonBytes, &obj)
-    if err != nil {
-        log.Fatal(err)
-    }
-
-    result := Transform(obj)
-
-    if result["foo"] != "bar" {
-        t.Error()
-    }
-}
-
-func TestTransform2(t *testing.T) {
+func TestRawInterface(t *testing.T) {
 
     // Tests
     tests := make(map[string]interface{})
@@ -76,12 +55,7 @@ func TestTransform2(t *testing.T) {
     tests["{\"foo\":3.14}"] = 3.14
 
     for test, expect := range tests {
-        obj := make(map[string]json.RawMessage)
-        err := json.Unmarshal([]byte(test), &obj)
-        if err != nil {
-            t.Error()
-        }
-        result := Transform(obj)
+        result := RawInterface([]byte(test))
         if result["foo"] != expect {
             t.Errorf("Expected %s, got %s", expect, result["foo"])
         }
