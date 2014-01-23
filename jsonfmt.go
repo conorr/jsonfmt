@@ -91,17 +91,20 @@ func ParseJSONP(contents []byte) ([][]byte, error) {
     return parts[1:], nil
 }
 
-func RawInterface(bytes []byte) map[string]interface{} {
+func RawInterfaceMap(bytes []byte) (map[string]interface{}, error) {
     obj := make(map[string]json.RawMessage)
     err := json.Unmarshal(bytes, &obj)
     if err != nil {
-        log.Panic()
+        return nil, err
     }
-    result := TransformJSON(obj)
-    return result
+    result, err := DecodeRawMessageMap(obj)
+    if err != nil {
+        return nil, err
+    }
+    return result, nil
 }
 
-func TransformJSON(obj map[string]json.RawMessage) map[string]interface{} {
+func DecodeRawMessageMap(obj map[string]json.RawMessage) (map[string]interface{}, error) {
 
     var (
         _string string
@@ -133,13 +136,17 @@ func TransformJSON(obj map[string]json.RawMessage) map[string]interface{} {
             }
             err = json.Unmarshal(val, &_obj)
             if (err == nil) {
-                tmp := TransformJSON(_obj)
+                tmp, err := DecodeRawMessageMap(_obj)
+                if err != nil {
+                    return nil, err
+                }
                 result[key] = tmp
                 break
             }
-            log.Fatal("Syntax error")
+            // TODO: return different error; SyntaxError has an offset
+            return nil, &json.SyntaxError{}
         }
     }
 
-    return result
+    return result, nil
 }
