@@ -90,3 +90,50 @@ func ParseJSONP(contents []byte) ([][]byte, error) {
     }
     return parts[1:], nil
 }
+
+func Transform(obj map[string]json.RawMessage) map[string]interface{} {
+
+    var (
+        _string string
+        _int int
+        _float64 float64
+        err error
+    )
+
+    // TODO: if type byte, transform to map[string]json.RawMessage
+    //if bytes, ok := obj.(byte); ok == true {
+    //}
+
+    _obj := make(map[string]json.RawMessage)
+
+    result := make(map[string]interface{})
+
+    for key, val := range obj {
+        for {
+            err = json.Unmarshal(val, &_string)
+            if (err == nil) {
+                result[key] = _string
+                break
+            }
+            err = json.Unmarshal(val, &_int)
+            if (err == nil) {
+                result[key] = _int
+                break
+            }
+            err = json.Unmarshal(val, &_float64)
+            if (err == nil) {
+                result[key] = _float64
+                break
+            }
+            err = json.Unmarshal(val, &_obj)
+            if (err == nil) {
+                tmp := Transform(_obj)
+                result[key] = tmp
+                break
+            }
+            log.Fatal("Syntax error")
+        }
+    }
+
+    return result
+}
