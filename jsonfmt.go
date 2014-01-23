@@ -91,7 +91,17 @@ func ParseJSONP(contents []byte) ([][]byte, error) {
     return parts[1:], nil
 }
 
-func Transform(obj map[string]json.RawMessage) map[string]interface{} {
+func RawInterface(bytes []byte) map[string]interface{} {
+    obj := make(map[string]json.RawMessage)
+    err := json.Unmarshal(bytes, &obj)
+    if err != nil {
+        log.Panic()
+    }
+    result := TransformJSON(obj)
+    return result
+}
+
+func TransformJSON(obj map[string]json.RawMessage) map[string]interface{} {
 
     var (
         _string string
@@ -99,10 +109,6 @@ func Transform(obj map[string]json.RawMessage) map[string]interface{} {
         _float64 float64
         err error
     )
-
-    // TODO: if type byte, transform to map[string]json.RawMessage
-    //if bytes, ok := obj.(byte); ok == true {
-    //}
 
     _obj := make(map[string]json.RawMessage)
 
@@ -127,7 +133,7 @@ func Transform(obj map[string]json.RawMessage) map[string]interface{} {
             }
             err = json.Unmarshal(val, &_obj)
             if (err == nil) {
-                tmp := Transform(_obj)
+                tmp := TransformJSON(_obj)
                 result[key] = tmp
                 break
             }
