@@ -15,6 +15,8 @@ func TestIndent(t *testing.T) {
 
     b := make(map[string]interface{})
     b["foo"] = "bar"
+    b["ima"] = "map"
+    b["ican"] = 24
     i["maptest"] = b
 
     Indent(&buf, i, "    ")

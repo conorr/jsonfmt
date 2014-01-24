@@ -4,6 +4,7 @@ import (
     "bytes"
     "fmt"
     "sort"
+    "log"
 )
 
 func Indent(dst *bytes.Buffer, src map[string]interface{}, indentStr string) error {
@@ -12,49 +13,45 @@ func Indent(dst *bytes.Buffer, src map[string]interface{}, indentStr string) err
 
 func indent(dst *bytes.Buffer, src map[string]interface{}, indentStr string, lvl int) error {
 
-    indentMultiple := func(l int) string {
-        var result string
-        for i := 0; i < (l + 1); i++ {
-            result += indentStr
+    indentLvl := func(lvl int) string {
+        if lvl == -1 {
+            return ""
         }
-        return result
+        str := ""
+        for i := 0; i < (lvl + 1); i++ {
+         str += indentStr
+        }
+        return str
     }
 
-    indentn := indentMultiple(lvl)
-    var indentp string
-    var delim string
-
-    if lvl == 0 {
-        indentp = ""
-    } else {
-        indentp = indentMultiple(lvl - 1)
-    }
-    
-    fmt.Printf("%s{\n", indentp)
-
+    del := "" 
+    fmt.Printf("{")
     keys := getKeysArray(src, true)
+    for _, key := range keys {
 
-    for i, key := range keys {
+        fmt.Printf("%s\n%s", del, indentLvl(lvl))
 
         val := src[key]
 
-        if i == (len(keys) - 1) {
-            delim = ""
-        } else {
-            delim = ","
-        }
-
         if _string, ok := val.(string); ok {
-            fmt.Printf("%s\"%s\": \"%s%s\"\n", indentn, key, _string, delim)
+            fmt.Printf("\"%s\": \"%s\"", key, _string)
         } else if _int, ok := val.(int); ok {
-            fmt.Printf("%s\"%s\": %d%s\n", indentn, key, _int, delim)
+            fmt.Printf("\"%s\": %d", key, _int)
         } else if _float64, ok := val.(float64); ok {
-            fmt.Printf("%s\"%s\": %v%s\n", indentn, key, _float64, delim)
+            fmt.Printf("\"%s\": %v", key, _float64)
         } else if _map, ok := val.(map[string]interface{}); ok {
             indent(dst, _map, "    ", lvl + 1)
+        } else {
+            log.Fatal()
         }
+
+        del = ","
     }
-    fmt.Printf("%s}\n", indentp)
+    fmt.Printf("\n%s}", indentLvl(lvl - 1))
+
+    if lvl == 0 {
+        fmt.Printf("\n")
+    }
 
     return nil
 }
