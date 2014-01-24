@@ -2,6 +2,7 @@ package main
 
 import (
     "encoding/json"
+    "log"
 )
 
 func RawInterfaceMap(bytes []byte) (map[string]interface{}, error) {
@@ -18,6 +19,14 @@ func RawInterfaceMap(bytes []byte) (map[string]interface{}, error) {
 }
 
 func DecodeRawMessageMap(obj map[string]json.RawMessage) (map[string]interface{}, error) {
+    result := make(map[string]interface{})
+    for key, val := range obj {
+        result[key] = DecodeRawMessage(val)
+    }
+    return result, nil
+}
+
+func DecodeRawMessage(obj json.RawMessage) interface{} {
 
     var (
         _string string
@@ -27,39 +36,50 @@ func DecodeRawMessageMap(obj map[string]json.RawMessage) (map[string]interface{}
     )
 
     _obj := make(map[string]json.RawMessage)
+    _arr := []json.RawMessage{}
+    var result interface{}
 
-    result := make(map[string]interface{})
-
-    for key, val := range obj {
-        for {
-            err = json.Unmarshal(val, &_string)
-            if (err == nil) {
-                result[key] = _string
-                break
-            }
-            err = json.Unmarshal(val, &_int)
-            if (err == nil) {
-                result[key] = _int
-                break
-            }
-            err = json.Unmarshal(val, &_float64)
-            if (err == nil) {
-                result[key] = _float64
-                break
-            }
-            err = json.Unmarshal(val, &_obj)
-            if (err == nil) {
-                tmp, err := DecodeRawMessageMap(_obj)
-                if err != nil {
-                    return nil, err
-                }
-                result[key] = tmp
-                break
-            }
-            // TODO: return different error; SyntaxError has an offset
-            return nil, &json.SyntaxError{}
+    for {
+        err = json.Unmarshal(obj, &_string)
+        if (err == nil) {
+            result = _string
+            break
         }
+
+        err = json.Unmarshal(obj, &_int)
+        if (err == nil) {
+            result = _int
+            break
+        }
+
+        err = json.Unmarshal(obj, &_float64)
+        if (err == nil) {
+            result = _float64
+            break
+        }
+
+        err = json.Unmarshal(obj, &_arr)
+        if err == nil {
+            tmp := make([]interface{}, len(_arr))
+            for i, el := range _arr {
+                tmp[i] = DecodeRawMessage(el)
+            }
+            result = tmp
+            break
+        }
+
+        err = json.Unmarshal(obj, &_obj)
+        if (err == nil) {
+            tmp, err := DecodeRawMessageMap(_obj)
+            if err != nil {
+                return nil
+            }
+            result = tmp
+            break
+        }
+
+        log.Panic()
     }
 
-    return result, nil
+    return result
 }
