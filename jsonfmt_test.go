@@ -3,10 +3,7 @@ package main
 import (
     "testing"
     "bytes"
-    //"fmt"
 )
-
-
 
 func TestParseJSONP1(t *testing.T) {
 
@@ -48,71 +45,5 @@ func TestParseJSONP3(t *testing.T) {
                 t.Errorf("Expected %s, got %s", expect[i], string(result[i]))
             }
         }
-    }
-}
-
-func TestRawInterfaceMap(t *testing.T) {
-
-    // Tests
-    tests := make(map[string]interface{})
-    tests["{\"foo\":\"bar\"}"] = "bar"
-    tests["{\"foo\":7}"] = 7
-    tests["{\"foo\":3.14}"] = 3.14
-
-    for test, expect := range tests {
-        result, _ := RawInterfaceMap([]byte(test))
-        if result["foo"] != expect {
-            t.Errorf("Expected %s, got %s", expect, result["foo"])
-        }
-    }
-
-}
-
-func TestRawInterfaceMapErrors(t *testing.T) {
-
-    test := []byte("{\"foo\":\"bar}")
-    _, err := RawInterfaceMap(test)
-
-    if err == nil {
-        t.Errorf("Expected error due to bad syntax")
-    }
-
-}
-
-func TestIndent(t *testing.T) {
-
-    var buf bytes.Buffer
-    i := make(map[string]interface{})
-    i["foo"] = "bar"
-    i["num"] = 2
-    i["floaty"] = 3.14
-
-    b := make(map[string]interface{})
-    b["foo"] = "bar"
-    i["maptest"] = b
-
-    Indent(&buf, i, 0, "    ")
-    
-}
-
-func TestGetKeysArray(t *testing.T) {
-
-    i := make(map[string]interface{})
-    i["pineapple"] = "bar"
-    i["banana"] = 2
-    i["apple"] = 3.14
-
-    arr := GetKeysArray(i, true)
-
-    if arr[0] != "apple" {
-        t.Errorf("oh no!")
-    }
-
-    if arr[1] != "banana" {
-        t.Errorf("oh no!")
-    }
-
-    if arr[2] != "pineapple" {
-        t.Errorf("oh no!")
     }
 }
