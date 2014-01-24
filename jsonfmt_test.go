@@ -3,6 +3,7 @@ package main
 import (
     "testing"
     "bytes"
+    //"fmt"
 )
 
 
@@ -92,4 +93,26 @@ func TestIndent(t *testing.T) {
 
     Indent(&buf, i, 0, "    ")
     
+}
+
+func TestGetKeysArray(t *testing.T) {
+
+    i := make(map[string]interface{})
+    i["pineapple"] = "bar"
+    i["banana"] = 2
+    i["apple"] = 3.14
+
+    arr := GetKeysArray(i, true)
+
+    if arr[0] != "apple" {
+        t.Errorf("oh no!")
+    }
+
+    if arr[1] != "banana" {
+        t.Errorf("oh no!")
+    }
+
+    if arr[2] != "pineapple" {
+        t.Errorf("oh no!")
+    }
 }
