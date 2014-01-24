@@ -6,14 +6,16 @@ import (
     "sort"
 )
 
-func Indent(dst *bytes.Buffer, src map[string]interface{}, lvl int, indent string) error {
+func Indent(dst *bytes.Buffer, src map[string]interface{}, indentStr string) error {
+    return indent(dst, src, indentStr, 0)
+}
 
-    // TODO: eliminate lvl in favor of a closure
+func indent(dst *bytes.Buffer, src map[string]interface{}, indentStr string, lvl int) error {
 
     indentMultiple := func(l int) string {
         var result string
         for i := 0; i < (l + 1); i++ {
-            result += indent
+            result += indentStr
         }
         return result
     }
@@ -30,7 +32,7 @@ func Indent(dst *bytes.Buffer, src map[string]interface{}, lvl int, indent strin
     
     fmt.Printf("%s{\n", indentp)
 
-    keys := GetKeysArray(src, true)
+    keys := getKeysArray(src, true)
 
     for i, key := range keys {
 
@@ -49,7 +51,7 @@ func Indent(dst *bytes.Buffer, src map[string]interface{}, lvl int, indent strin
         } else if _float64, ok := val.(float64); ok {
             fmt.Printf("%s\"%s\": %v%s\n", indentn, key, _float64, delim)
         } else if _map, ok := val.(map[string]interface{}); ok {
-            Indent(dst, _map, lvl + 1, "    ")
+            indent(dst, _map, "    ", lvl + 1)
         }
     }
     fmt.Printf("%s}\n", indentp)
@@ -57,7 +59,7 @@ func Indent(dst *bytes.Buffer, src map[string]interface{}, lvl int, indent strin
     return nil
 }
 
-func GetKeysArray(obj map[string]interface{}, sortKeys bool) []string {
+func getKeysArray(obj map[string]interface{}, sortKeys bool) []string {
     arr := make([]string, len(obj))
     i := 0
     for key, _ := range obj {

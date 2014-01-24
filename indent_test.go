@@ -17,28 +17,6 @@ func TestIndent(t *testing.T) {
     b["foo"] = "bar"
     i["maptest"] = b
 
-    Indent(&buf, i, 0, "    ")
+    Indent(&buf, i, "    ")
     
-}
-
-func TestGetKeysArray(t *testing.T) {
-
-    i := make(map[string]interface{})
-    i["pineapple"] = "bar"
-    i["banana"] = 2
-    i["apple"] = 3.14
-
-    arr := GetKeysArray(i, true)
-
-    if arr[0] != "apple" {
-        t.Errorf("oh no!")
-    }
-
-    if arr[1] != "banana" {
-        t.Errorf("oh no!")
-    }
-
-    if arr[2] != "pineapple" {
-        t.Errorf("oh no!")
-    }
 }
