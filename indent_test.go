@@ -12,6 +12,7 @@ func TestIndent(t *testing.T) {
     i["foo"] = "bar"
     i["num"] = 2
     i["floaty"] = 3.14
+    i["bool"] = false
 
     b := make(map[string]interface{})
     b["foo"] = "bar"
@@ -19,6 +20,16 @@ func TestIndent(t *testing.T) {
     b["ican"] = 24
     i["maptest"] = b
 
+    bc := make(map[string]interface{})
+    bc["apples"] = "oranges"
+    bc["bananas"] = "pineapples"
+    i["fruits"] = bc
+
+    arr := make([]interface{}, 3)
+    arr[0] = bc
+    arr[1] = bc
+    arr[2] = bc
+    i["arr"] = arr
+
     Indent(&buf, i, "    ")
-    
 }
