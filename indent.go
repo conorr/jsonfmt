@@ -11,46 +11,57 @@ func Indent(dst *bytes.Buffer, src map[string]interface{}, indentStr string) err
     return indent(dst, src, indentStr, 0)
 }
 
-func indent(dst *bytes.Buffer, src map[string]interface{}, indentStr string, lvl int) error {
-
-    indentLvl := func(lvl int) string {
-        if lvl == -1 {
-            return ""
-        }
+func indent(dst *bytes.Buffer, src interface{}, indentStr string, depth int) error {
+    makeIndent := func(depth int) string {
         str := ""
-        for i := 0; i < (lvl + 1); i++ {
-         str += indentStr
+        for i := 0; i < depth; i++ {
+            str += indentStr
         }
         return str
     }
 
-    del := "" 
-    fmt.Printf("{")
-    keys := getKeysArray(src, true)
-    for _, key := range keys {
+    if _str, ok := src.(string); ok {
+        fmt.Printf("\"%s\"", _str)
+    } else if _int, ok := src.(int); ok {
+        fmt.Printf("%d", _int)
+    } else if _float64, ok := src.(float64); ok {
+        fmt.Printf("%v", _float64)
+    } else if _bool, ok := src.(bool); ok {
+        fmt.Printf("%v", _bool)
+    } else if _arr, ok := src.([]interface{}); ok {
 
-        fmt.Printf("%s\n%s", del, indentLvl(lvl))
-
-        val := src[key]
-
-        if _string, ok := val.(string); ok {
-            fmt.Printf("\"%s\": \"%s\"", key, _string)
-        } else if _int, ok := val.(int); ok {
-            fmt.Printf("\"%s\": %d", key, _int)
-        } else if _float64, ok := val.(float64); ok {
-            fmt.Printf("\"%s\": %v", key, _float64)
-        } else if _map, ok := val.(map[string]interface{}); ok {
-            indent(dst, _map, "    ", lvl + 1)
-        } else {
-            log.Fatal()
+        fmt.Printf("[\n")
+        final := len(_arr) - 1
+        for i, item := range _arr {
+            fmt.Printf("%s", makeIndent(depth + 1))
+            indent(dst, item, indentStr, depth + 1)
+            if i != final {
+                fmt.Printf(",")
+            }
+            fmt.Printf("\n")
         }
 
-        del = ","
-    }
-    fmt.Printf("\n%s}", indentLvl(lvl - 1))
+        fmt.Printf("%s]", makeIndent(depth))
 
-    if lvl == 0 {
-        fmt.Printf("\n")
+    } else if _map, ok := src.(map[string]interface{}); ok {
+
+        fmt.Printf("{\n")
+
+        keys := getKeysArray(_map, false)
+        final := len(keys) - 1
+        for i, key := range keys {
+            fmt.Printf("%s\"%s\": ", makeIndent(depth + 1), key)
+            indent(dst, _map[key], indentStr, depth + 1)
+            if i != final {
+                fmt.Printf(",")
+            }
+            fmt.Printf("\n")
+        }
+
+        fmt.Printf("%s}", makeIndent(depth))
+
+    } else {
+        log.Fatal("Don't know what to do with it!")
     }
 
     return nil
