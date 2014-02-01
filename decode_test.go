@@ -83,11 +83,15 @@ func TestRawInterfaceMapArray2(t *testing.T) {
 
 func TestRawInterfaceMapErrors(t *testing.T) {
 
-    test := []byte("{\"foo\":\"bar}")
-    _, err := RawInterfaceMap(test)
-
-    if err == nil {
-        t.Errorf("Expected error due to bad syntax")
+    tests := []string{
+        "{\"foo\": \"bar}",
+        "{\"foo\": [1, 2 3]}",
     }
 
+    for _, test := range tests {
+        _, err := RawInterfaceMap([]byte(test))
+        if err == nil {
+            t.Errorf("Expected error due to bad syntax")
+        }
+    }
 }

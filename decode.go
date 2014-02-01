@@ -2,7 +2,7 @@ package main
 
 import (
     "encoding/json"
-    "log"
+    "errors"
 )
 
 func RawInterfaceMap(bytes []byte) (map[string]interface{}, error) {
@@ -20,18 +20,23 @@ func RawInterfaceMap(bytes []byte) (map[string]interface{}, error) {
 
 func DecodeRawMessageMap(obj map[string]json.RawMessage) (map[string]interface{}, error) {
     result := make(map[string]interface{})
+    var err error
     for key, val := range obj {
-        result[key] = DecodeRawMessage(val)
+        result[key], err = DecodeRawMessage(val)
+        if err != nil {
+            return nil, err
+        }
     }
     return result, nil
 }
 
-func DecodeRawMessage(obj json.RawMessage) interface{} {
+func DecodeRawMessage(obj json.RawMessage) (interface{}, error) {
 
     var (
         _string string
         _int int
         _float64 float64
+        _bool bool
         err error
     )
 
@@ -58,11 +63,20 @@ func DecodeRawMessage(obj json.RawMessage) interface{} {
             break
         }
 
+        err = json.Unmarshal(obj, &_bool)
+        if (err == nil) {
+            result = _bool
+            break
+        }
+
         err = json.Unmarshal(obj, &_arr)
         if err == nil {
             tmp := make([]interface{}, len(_arr))
             for i, el := range _arr {
-                tmp[i] = DecodeRawMessage(el)
+                tmp[i], err = DecodeRawMessage(el)
+                if err != nil {
+                    return nil, err
+                }
             }
             result = tmp
             break
@@ -72,14 +86,14 @@ func DecodeRawMessage(obj json.RawMessage) interface{} {
         if (err == nil) {
             tmp, err := DecodeRawMessageMap(_obj)
             if err != nil {
-                return nil
+                return nil, err
             }
             result = tmp
             break
         }
 
-        log.Panic()
+        return nil, errors.New("Syntax Error")
     }
 
-    return result
+    return result, nil
 }
