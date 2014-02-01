@@ -11,6 +11,11 @@ func Indent(dst *bytes.Buffer, src map[string]interface{}, indentStr string) err
     return indent(dst, src, indentStr, 0)
 }
 
+func Writef(dst *bytes.Buffer, format string, a ...interface{}) {
+    str := fmt.Sprintf(format, a...)
+    dst.WriteString(str)
+}
+
 func indent(dst *bytes.Buffer, src interface{}, indentStr string, depth int) error {
     makeIndent := func(depth int) string {
         str := ""
@@ -21,44 +26,44 @@ func indent(dst *bytes.Buffer, src interface{}, indentStr string, depth int) err
     }
 
     if _str, ok := src.(string); ok {
-        fmt.Printf("\"%s\"", _str)
+        Writef(dst, "\"%s\"", _str)
     } else if _int, ok := src.(int); ok {
-        fmt.Printf("%d", _int)
+        Writef(dst, "%d", _int)
     } else if _float64, ok := src.(float64); ok {
-        fmt.Printf("%v", _float64)
+        Writef(dst, "%v", _float64)
     } else if _bool, ok := src.(bool); ok {
-        fmt.Printf("%v", _bool)
+        Writef(dst, "%v", _bool)
     } else if _arr, ok := src.([]interface{}); ok {
 
-        fmt.Printf("[\n")
+        Writef(dst, "[\n")
         final := len(_arr) - 1
         for i, item := range _arr {
-            fmt.Printf("%s", makeIndent(depth + 1))
+            Writef(dst, "%s", makeIndent(depth + 1))
             indent(dst, item, indentStr, depth + 1)
             if i != final {
-                fmt.Printf(",")
+                Writef(dst, ",")
             }
-            fmt.Printf("\n")
+            Writef(dst, "\n")
         }
 
-        fmt.Printf("%s]", makeIndent(depth))
+        Writef(dst, "%s]", makeIndent(depth))
 
     } else if _map, ok := src.(map[string]interface{}); ok {
 
-        fmt.Printf("{\n")
+        Writef(dst, "{\n")
 
         keys := getKeysArray(_map, false)
         final := len(keys) - 1
         for i, key := range keys {
-            fmt.Printf("%s\"%s\": ", makeIndent(depth + 1), key)
+            Writef(dst, "%s\"%s\": ", makeIndent(depth + 1), key)
             indent(dst, _map[key], indentStr, depth + 1)
             if i != final {
-                fmt.Printf(",")
+                Writef(dst, ",")
             }
-            fmt.Printf("\n")
+            Writef(dst, "\n")
         }
 
-        fmt.Printf("%s}", makeIndent(depth))
+        Writef(dst, "%s}", makeIndent(depth))
 
     } else {
         log.Fatal("Don't know what to do with it!")
