@@ -1,0 +1,18 @@
+{
+    "foo": "bar",
+    "boolean": true,
+    "array": [
+        "element1",
+        "element2",
+        "element3"
+    ],
+    "float": 3.14159,
+    "map": {
+        "fruit": "apple",
+        "vegetables": [
+            "celery",
+            "lettuce",
+            "carrots"
+        ]
+    }
+}
