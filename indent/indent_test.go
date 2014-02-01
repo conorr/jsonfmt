@@ -1,4 +1,4 @@
-package main
+package indent
 
 import (
     "bytes"
@@ -7,6 +7,7 @@ import (
     "log"
     "io"
     "fmt"
+    "jsonfmt/decode"
 )
 
 func TestIndent(t *testing.T) {
@@ -44,7 +45,7 @@ func TestIndentEndtoEnd(t *testing.T) {
     var bufOut bytes.Buffer
 
     // Open file and read into buffer.
-    fi, err := os.Open("testfiles/test1.json")
+    fi, err := os.Open("../testfiles/test1.json")
     if err != nil {
         log.Fatal(err)
     }
@@ -61,7 +62,7 @@ func TestIndentEndtoEnd(t *testing.T) {
     }
     fi.Close()
 
-    obj, err := RawInterfaceMap(bufIn.Bytes())
+    obj, err := decode.RawInterfaceMap(bufIn.Bytes())
     if err != nil {
         t.Errorf("RawInterfaceMap returned error; possible syntax error")
         return

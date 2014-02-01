@@ -13,6 +13,11 @@
             "celery",
             "lettuce",
             "carrots"
-        ]
+        ],
+        "beverages": {
+            "morning": "coffee",
+            "lunch": "tea",
+            "evening": "beer"
+        }
     }
 }

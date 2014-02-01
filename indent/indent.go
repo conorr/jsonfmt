@@ -1,4 +1,4 @@
-package main
+package indent
 
 import (
     "bytes"
@@ -7,16 +7,12 @@ import (
     "log"
 )
 
-func Indent(dst *bytes.Buffer, src map[string]interface{}, indentStr string) error {
+func Indent(dst *bytes.Buffer, src interface{}, indentStr string) error {
     return indent(dst, src, indentStr, 0)
 }
 
-func Writef(dst *bytes.Buffer, format string, a ...interface{}) {
-    str := fmt.Sprintf(format, a...)
-    dst.WriteString(str)
-}
-
 func indent(dst *bytes.Buffer, src interface{}, indentStr string, depth int) error {
+
     makeIndent := func(depth int) string {
         str := ""
         for i := 0; i < depth; i++ {
@@ -72,6 +68,9 @@ func indent(dst *bytes.Buffer, src interface{}, indentStr string, depth int) err
     return nil
 }
 
+// Given a map of type map[string]interface{}, return an array of its keys.
+// If sortKeys is true, the keys will be sorted alphabetically; otherwise they
+// will be in the order as discovered.
 func getKeysArray(obj map[string]interface{}, sortKeys bool) []string {
     arr := make([]string, len(obj))
     i := 0
@@ -83,4 +82,10 @@ func getKeysArray(obj map[string]interface{}, sortKeys bool) []string {
         sort.Strings(arr)
     }
     return arr
+}
+
+// Write a Sprintf-style string to a buffer.
+func Writef(dst *bytes.Buffer, format string, a ...interface{}) {
+    str := fmt.Sprintf(format, a...)
+    dst.WriteString(str)
 }

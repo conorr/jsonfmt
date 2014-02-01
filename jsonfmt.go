@@ -8,7 +8,8 @@ import (
     "bytes"
     "regexp"
     "errors"
-    "encoding/json"
+    "jsonfmt/decode"
+    "jsonfmt/indent"
 )
 
 const READBYTES int = 1024
@@ -57,15 +58,12 @@ func main() {
 
     // Make a new buffer of indented JSON.
     bodyIndented := bytes.NewBufferString("")
-    err = json.Indent(bodyIndented, body.Bytes(), "", "    ")
+    i, err := decode.RawInterfaceMap(body.Bytes())
     if err != nil {
-        if serr, ok := err.(*json.SyntaxError); ok {
-            fmt.Printf("Syntax error at byte %d: %s\n", serr.Offset, serr.Error())
-        } else {
-            fmt.Println(err)
-        }
+        fmt.Println(err)
         os.Exit(1)
     }
+    indent.Indent(bodyIndented, i, "    ")
 
     // Write the buffer into the same file.
     fo, err := os.Create(filename)
