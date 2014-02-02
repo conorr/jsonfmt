@@ -7,11 +7,22 @@ import (
     "log"
 )
 
+type BufferWriter struct {
+    buf *bytes.Buffer
+}
+
+func (writer BufferWriter) Writef(format string, a...interface{}) {
+    str := fmt.Sprintf(format, a...)
+    writer.buf.WriteString(str)
+}
+
 func Indent(dst *bytes.Buffer, src interface{}, indentStr string) error {
     return indent(dst, src, indentStr, 0)
 }
 
 func indent(dst *bytes.Buffer, src interface{}, indentStr string, depth int) error {
+
+    writer := BufferWriter{buf: dst}
 
     makeIndent := func(depth int) string {
         str := ""
@@ -22,44 +33,44 @@ func indent(dst *bytes.Buffer, src interface{}, indentStr string, depth int) err
     }
 
     if _str, ok := src.(string); ok {
-        Writef(dst, "\"%s\"", _str)
+        writer.Writef("%q", _str)
     } else if _int, ok := src.(int); ok {
-        Writef(dst, "%d", _int)
+        writer.Writef("%d", _int)
     } else if _float64, ok := src.(float64); ok {
-        Writef(dst, "%v", _float64)
+        writer.Writef("%v", _float64)
     } else if _bool, ok := src.(bool); ok {
-        Writef(dst, "%v", _bool)
+        writer.Writef("%v", _bool)
     } else if _arr, ok := src.([]interface{}); ok {
 
-        Writef(dst, "[\n")
+        writer.Writef("[\n")
         final := len(_arr) - 1
         for i, item := range _arr {
-            Writef(dst, "%s", makeIndent(depth + 1))
+            writer.Writef("%s", makeIndent(depth + 1))
             indent(dst, item, indentStr, depth + 1)
             if i != final {
-                Writef(dst, ",")
+                writer.Writef(",")
             }
-            Writef(dst, "\n")
+            writer.Writef("\n")
         }
 
-        Writef(dst, "%s]", makeIndent(depth))
+        writer.Writef("%s]", makeIndent(depth))
 
     } else if _map, ok := src.(map[string]interface{}); ok {
 
-        Writef(dst, "{\n")
+        writer.Writef("{\n")
 
         keys := getKeysArray(_map, false)
         final := len(keys) - 1
         for i, key := range keys {
-            Writef(dst, "%s\"%s\": ", makeIndent(depth + 1), key)
+            writer.Writef("%s%q: ", makeIndent(depth + 1), key)
             indent(dst, _map[key], indentStr, depth + 1)
             if i != final {
-                Writef(dst, ",")
+                writer.Writef(",")
             }
-            Writef(dst, "\n")
+            writer.Writef("\n")
         }
 
-        Writef(dst, "%s}", makeIndent(depth))
+        writer.Writef("%s}", makeIndent(depth))
 
     } else {
         log.Fatal("Don't know what to do with it!")
@@ -82,10 +93,4 @@ func getKeysArray(obj map[string]interface{}, sortKeys bool) []string {
         sort.Strings(arr)
     }
     return arr
-}
-
-// Write a Sprintf-style string to a buffer.
-func Writef(dst *bytes.Buffer, format string, a ...interface{}) {
-    str := fmt.Sprintf(format, a...)
-    dst.WriteString(str)
 }
