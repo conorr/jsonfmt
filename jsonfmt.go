@@ -57,13 +57,13 @@ func main() {
     }
 
     // Make a new buffer of indented JSON.
-    bodyIndented := bytes.NewBufferString("")
+    indentedBody := bytes.NewBufferString("")
     i, err := decode.RawInterfaceMap(body.Bytes())
     if err != nil {
         fmt.Println(err)
         os.Exit(1)
     }
-    indent.Indent(bodyIndented, i, "    ", false)
+    indent.Indent(indentedBody, i, "    ", false)
 
     // Write the buffer into the same file.
     fo, err := os.Create(filename)
@@ -71,7 +71,7 @@ func main() {
         log.Fatal(err)
     }
     fo.Write(head.Bytes())
-    fo.Write(bodyIndented.Bytes())
+    fo.Write(indentedBody.Bytes())
     fo.Write(tail.Bytes())
     fo.Close()
 }
