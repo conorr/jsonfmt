@@ -67,7 +67,7 @@ func TestIndentEndtoEnd(t *testing.T) {
         t.Errorf("RawInterfaceMap returned error; possible syntax error")
         return
     }
-    Indent(&bufOut, obj, "    ")
+    Indent(&bufOut, obj, "    ", false)
 
     // Trim newlines off right of file
     for index, expect := range bytes.TrimRight(bufIn.Bytes(), "\n") {

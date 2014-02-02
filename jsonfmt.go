@@ -63,7 +63,7 @@ func main() {
         fmt.Println(err)
         os.Exit(1)
     }
-    indent.Indent(bodyIndented, i, "    ")
+    indent.Indent(bodyIndented, i, "    ", false)
 
     // Write the buffer into the same file.
     fo, err := os.Create(filename)

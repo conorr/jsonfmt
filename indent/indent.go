@@ -16,11 +16,11 @@ func (writer BufferWriter) Writef(format string, a...interface{}) {
     writer.buf.WriteString(str)
 }
 
-func Indent(dst *bytes.Buffer, src interface{}, indentStr string) error {
-    return indent(dst, src, indentStr, 0)
+func Indent(dst *bytes.Buffer, src interface{}, indentStr string, sortKeys bool) error {
+    return indent(dst, src, indentStr, 0, sortKeys)
 }
 
-func indent(dst *bytes.Buffer, src interface{}, indentStr string, depth int) error {
+func indent(dst *bytes.Buffer, src interface{}, indentStr string, depth int, sortKeys bool) error {
 
     writer := BufferWriter{buf: dst}
 
@@ -46,7 +46,7 @@ func indent(dst *bytes.Buffer, src interface{}, indentStr string, depth int) err
         final := len(_arr) - 1
         for i, item := range _arr {
             writer.Writef("%s", makeIndent(depth + 1))
-            indent(dst, item, indentStr, depth + 1)
+            indent(dst, item, indentStr, depth + 1, sortKeys)
             if i != final {
                 writer.Writef(",")
             }
@@ -59,11 +59,11 @@ func indent(dst *bytes.Buffer, src interface{}, indentStr string, depth int) err
 
         writer.Writef("{\n")
 
-        keys := getKeysArray(_map, false)
+        keys := getKeysArray(_map, sortKeys)
         final := len(keys) - 1
         for i, key := range keys {
             writer.Writef("%s%q: ", makeIndent(depth + 1), key)
-            indent(dst, _map[key], indentStr, depth + 1)
+            indent(dst, _map[key], indentStr, depth + 1, sortKeys)
             if i != final {
                 writer.Writef(",")
             }
