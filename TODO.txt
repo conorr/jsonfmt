@@ -1,9 +1,0 @@
-TODO:
-
-1. Implement own Indent method
-2. Make in Iterable interface
-3. Implement Iterable in Indent method
-3.5 Implement a method that can sort an array of strings.
-4. Implement SortedIterable. Sorts keys using 3.5 and returns items in
-   sorted order.
-5. Add cli flags
