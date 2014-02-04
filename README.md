@@ -1,7 +1,7 @@
 jsonfmt
 =======
 
-JSON formatting utility
+A fast JSON formatting utility
 ----
 
 `jsonfmt` takes a file containing JSON data and formats it.
@@ -25,14 +25,16 @@ $ cat example.json
 }
 ```
 
-It can also handle JSONP format. For example:
+It can also handle JSONP. For example:
 
 ```
 $ cat example.js
-SOMECALLBACK({"foo":"bar"})
+SOME.CALLBACK({"apples":true,"oranges":true,"pineapples":false})
 $ jsonfmt example.js
 $ cat example.js
-SOMECALLBACK({
-    "foo": "bar"
+SOME.CALLBACK({
+    "apples": true,
+    "oranges": true,
+    "pineapples": false
 })
 ```
