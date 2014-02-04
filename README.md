@@ -25,7 +25,22 @@ $ cat example.json
 }
 ```
 
-It can also handle JSONP. For example:
+You can use the `--sort`/`-s` flag to sort keys alphabetically:
+
+```
+$ cat fruits.json
+{"bananas":2,"apples":5,"pineapples":1,"mangoes":3}
+$ jsonfmt fruits.json --sort
+$ cat fruits.json
+{
+    "apples": 5,
+    "bananas": 2,
+    "mangoes": 3,
+    "pineapples": 1
+}
+```
+
+It also handles JSONP automatically. For example:
 
 ```
 $ cat example.js
