@@ -10,6 +10,7 @@ import (
     "errors"
     "jsonfmt/decode"
     "jsonfmt/indent"
+    "github.com/jessevdk/go-flags"
 )
 
 const READBYTES int = 1024
@@ -23,12 +24,18 @@ func main() {
         tail bytes.Buffer
     )
 
+    var opts struct {
+        Sort bool `short:"s" long:"sort" description:"Sort keys alphabetically"`
+    }
+
+    args, _ := flags.Parse(&opts)
+
     // Parse args.
-    if (len(os.Args) < 2) {
+    if (len(args) < 1) {
         fmt.Println("Usage: jsonfmt [file]");
         os.Exit(1)
     }
-    filename := os.Args[1]
+    filename := args[0]
 
     // Open file and read into buffer.
     fi, err := os.Open(filename)
@@ -64,7 +71,7 @@ func main() {
         fmt.Println(err)
         os.Exit(1)
     }
-    indent.Indent(indentedBody, i, "    ", false)
+    indent.Indent(indentedBody, i, "    ", opts.Sort)
 
     // Write the buffer into the same file.
     fo, err := os.Create(filename)
