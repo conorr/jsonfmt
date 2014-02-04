@@ -57,6 +57,7 @@ func main() {
     }
 
     // Make a new buffer of indented JSON.
+    // TODO: need to initialize like this?
     indentedBody := bytes.NewBufferString("")
     i, err := decode.RawInterfaceMap(body.Bytes())
     if err != nil {
