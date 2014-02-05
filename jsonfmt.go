@@ -16,17 +16,21 @@ const READBYTES int = 1024
 const JSONP_RE string = "^([\n]?[A-Za-z_0-9.]+[(]{1})(.*)([)]|[)][\n]+)$"
 
 func main() {
+
 	var opts struct {
 		Sort bool `short:"s" long:"sort" description:"Sort keys alphabetically"`
 	}
+
 	args, _ := flags.Parse(&opts)
 	if len(args) < 1 {
-		fmt.Println("Usage: jsonfmt [file]")
+		fmt.Println("Usage: jsonfmt [-s] [--sort] [file]")
 		os.Exit(1)
 	}
 	filename := args[0]
+
 	inBuf := readFile(filename)
 	outBuf := JSONFmt(body, opts.Sort)
+
 	err := writeFile(filename, outBuf)
 	if err != nil {
 		fmt.Println(err)
