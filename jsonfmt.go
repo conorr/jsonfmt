@@ -17,30 +17,21 @@ const READBYTES int = 1024
 const JSONP_RE string = "^([\n]?[A-Za-z_0-9.]+[(]{1})(.*)([)]|[)][\n]+)$"
 
 func main() {
-
 	var opts struct {
 		Sort bool `short:"s" long:"sort" description:"Sort keys alphabetically"`
 	}
-
 	args, _ := flags.Parse(&opts)
-
-	// Parse args.
 	if len(args) < 1 {
 		fmt.Println("Usage: jsonfmt [file]")
 		os.Exit(1)
 	}
 	filename := args[0]
-
-	body := loadFile(filename)
-
-	nbuf := JSONFmt(body, opts.Sort)
-
-	// Write the buffer into the same file.
-	err := saveFile(filename, nbuf)
+	inBuf := readFile(filename)
+	outBuf := JSONFmt(body, opts.Sort)
+	err := writeFile(filename, outBuf)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 }
 
 func JSONFmt(body *bytes.Buffer, sortKeys bool) *bytes.Buffer {
@@ -90,7 +81,7 @@ func ParseJSONP(contents []byte) ([][]byte, error) {
 	return parts[1:], nil
 }
 
-func loadFile(filename string) *bytes.Buffer {
+func readFile(filename string) *bytes.Buffer {
 	fi, err := os.Open(filename)
 	if err != nil {
         fmt.Println(err)
@@ -112,7 +103,7 @@ func loadFile(filename string) *bytes.Buffer {
     return &buf
 }
 
-func saveFile(filename string, buf *bytes.Buffer) error {
+func writeFile(filename string, buf *bytes.Buffer) error {
 	fo, err := os.Create(filename)
 	if err != nil {
 		return err
