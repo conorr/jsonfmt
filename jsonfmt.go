@@ -36,12 +36,10 @@ func main() {
 	nbuf := JSONFmt(body, opts.Sort)
 
 	// Write the buffer into the same file.
-	fo, err := os.Create(filename)
+	err := saveFile(filename, nbuf)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fo.Write(nbuf.Bytes())
-	fo.Close()
 
 }
 
@@ -49,7 +47,6 @@ func JSONFmt(body *bytes.Buffer, sortKeys bool) *bytes.Buffer {
 
 	var (
 		head bytes.Buffer
-		//body *bytes.Buffer
 		tail bytes.Buffer
 	)
 
@@ -113,4 +110,14 @@ func loadFile(filename string) *bytes.Buffer {
 	}
 	fi.Close()
     return &buf
+}
+
+func saveFile(filename string, buf *bytes.Buffer) error {
+	fo, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	fo.Write(buf.Bytes())
+	fo.Close()
+	return nil
 }
