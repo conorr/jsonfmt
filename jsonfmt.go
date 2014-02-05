@@ -5,14 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jessevdk/go-flags"
-	"io"
 	"jsonfmt/decode"
 	"jsonfmt/indent"
+	"jsonfmt/util"
 	"os"
 	"regexp"
 )
 
-const READBYTES int = 1024
 const JSONP_RE string = "^([\n]?[A-Za-z_0-9.]+[(]{1})(.*)([)]|[)][\n]+)$"
 
 func main() {
@@ -28,10 +27,10 @@ func main() {
 	}
 	filename := args[0]
 
-	inBuf := readFile(filename)
+	inBuf := util.ReadFile(filename)
 	outBuf := JSONFmt(inBuf, opts.Sort)
 
-	err := writeFile(filename, outBuf)
+	err := util.WriteFile(filename, outBuf)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -81,37 +80,4 @@ func ParseJSONP(contents []byte) ([][]byte, error) {
 		return nil, errors.New("Could not parse into JSONP")
 	}
 	return parts[1:], nil
-}
-
-func readFile(filename string) *bytes.Buffer {
-	fi, err := os.Open(filename)
-	if err != nil {
-        fmt.Println(err)
-		os.Exit(1)
-	}
-    var buf bytes.Buffer
-	data := make([]byte, READBYTES)
-	for {
-		n, err := fi.Read(data)
-		if err != nil && err != io.EOF {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		if n == 0 {
-			break
-		}
-		buf.Write(data[:n])
-	}
-	fi.Close()
-    return &buf
-}
-
-func writeFile(filename string, buf *bytes.Buffer) error {
-	fo, err := os.Create(filename)
-	if err != nil {
-		return err
-	}
-	fo.Write(buf.Bytes())
-	fo.Close()
-	return nil
 }
