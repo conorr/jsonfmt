@@ -29,7 +29,7 @@ func main() {
 	filename := args[0]
 
 	inBuf := readFile(filename)
-	outBuf := JSONFmt(body, opts.Sort)
+	outBuf := JSONFmt(inBuf, opts.Sort)
 
 	err := writeFile(filename, outBuf)
 	if err != nil {
@@ -40,10 +40,8 @@ func main() {
 
 func JSONFmt(body *bytes.Buffer, sortKeys bool) *bytes.Buffer {
 
-	var (
-		head bytes.Buffer
-		tail bytes.Buffer
-	)
+	var head bytes.Buffer
+	var tail bytes.Buffer
 
 	// Try parsing JSONP.
 	if parts, err := ParseJSONP(body.Bytes()); err == nil {
@@ -56,12 +54,12 @@ func JSONFmt(body *bytes.Buffer, sortKeys bool) *bytes.Buffer {
 	// Make a new buffer of indented JSON.
 	// TODO: need to initialize like this?
 	indentedBody := bytes.NewBufferString("")
-	i, err := decode.RawInterfaceMap(body.Bytes())
+	obj, err := decode.RawInterfaceMap(body.Bytes())
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	indent.Indent(indentedBody, i, "    ", sortKeys)
+	indent.Indent(indentedBody, obj, "    ", sortKeys)
 
 	var result bytes.Buffer
 
