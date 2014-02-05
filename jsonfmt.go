@@ -8,7 +8,6 @@ import (
 	"io"
 	"jsonfmt/decode"
 	"jsonfmt/indent"
-	"log"
 	"os"
 	"regexp"
 )
@@ -30,7 +29,8 @@ func main() {
 	outBuf := JSONFmt(body, opts.Sort)
 	err := writeFile(filename, outBuf)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
 }
 
@@ -92,7 +92,8 @@ func readFile(filename string) *bytes.Buffer {
 	for {
 		n, err := fi.Read(data)
 		if err != nil && err != io.EOF {
-			log.Fatal(err)
+			fmt.Println(err)
+			os.Exit(1)
 		}
 		if n == 0 {
 			break
