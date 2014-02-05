@@ -97,7 +97,7 @@ func loadFile(filename string) *bytes.Buffer {
 		os.Exit(1)
 	}
     var buf bytes.Buffer
-	data := make([]byte, 1024)
+	data := make([]byte, READBYTES)
 	for {
 		n, err := fi.Read(data)
 		if err != nil && err != io.EOF {
