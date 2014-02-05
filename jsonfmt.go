@@ -20,7 +20,7 @@ func main() {
 
 	var (
 		head bytes.Buffer
-		body bytes.Buffer
+		body *bytes.Buffer
 		tail bytes.Buffer
 	)
 
@@ -37,23 +37,7 @@ func main() {
 	}
 	filename := args[0]
 
-	// Open file and read into buffer.
-	fi, err := os.Open(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	data := make([]byte, READBYTES)
-	for {
-		n, err := fi.Read(data)
-		if err != nil && err != io.EOF {
-			log.Fatal(err)
-		}
-		if n == 0 {
-			break
-		}
-		body.Write(data[:n])
-	}
-	fi.Close()
+	body = loadFile(filename)
 
 	// Try parsing JSONP.
 	if parts, err := ParseJSONP(body.Bytes()); err == nil {
@@ -95,4 +79,26 @@ func ParseJSONP(contents []byte) ([][]byte, error) {
 		return nil, errors.New("Could not parse into JSONP")
 	}
 	return parts[1:], nil
+}
+
+func loadFile(filename string) *bytes.Buffer {
+	fi, err := os.Open(filename)
+	if err != nil {
+        fmt.Println(err)
+		os.Exit(1)
+	}
+    var buf bytes.Buffer
+	data := make([]byte, 1024)
+	for {
+		n, err := fi.Read(data)
+		if err != nil && err != io.EOF {
+			log.Fatal(err)
+		}
+		if n == 0 {
+			break
+		}
+		buf.Write(data[:n])
+	}
+	fi.Close()
+    return &buf
 }
