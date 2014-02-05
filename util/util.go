@@ -3,8 +3,8 @@ package util
 import (
 	"bytes"
 	"fmt"
-	"os"
 	"io"
+	"os"
 )
 
 const READBYTES int = 1024
@@ -12,10 +12,10 @@ const READBYTES int = 1024
 func ReadFile(filename string) *bytes.Buffer {
 	fi, err := os.Open(filename)
 	if err != nil {
-        fmt.Println(err)
+		fmt.Println(err)
 		os.Exit(1)
 	}
-    var buf bytes.Buffer
+	var buf bytes.Buffer
 	data := make([]byte, READBYTES)
 	for {
 		n, err := fi.Read(data)
@@ -29,7 +29,7 @@ func ReadFile(filename string) *bytes.Buffer {
 		buf.Write(data[:n])
 	}
 	fi.Close()
-    return &buf
+	return &buf
 }
 
 func WriteFile(filename string, buf *bytes.Buffer) error {
