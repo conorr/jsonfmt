@@ -18,12 +18,6 @@ const JSONP_RE string = "^([\n]?[A-Za-z_0-9.]+[(]{1})(.*)([)]|[)][\n]+)$"
 
 func main() {
 
-	var (
-		head bytes.Buffer
-		body *bytes.Buffer
-		tail bytes.Buffer
-	)
-
 	var opts struct {
 		Sort bool `short:"s" long:"sort" description:"Sort keys alphabetically"`
 	}
@@ -37,7 +31,27 @@ func main() {
 	}
 	filename := args[0]
 
-	body = loadFile(filename)
+	body := loadFile(filename)
+
+	nbuf := JSONFmt(body, opts.Sort)
+
+	// Write the buffer into the same file.
+	fo, err := os.Create(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fo.Write(nbuf.Bytes())
+	fo.Close()
+
+}
+
+func JSONFmt(body *bytes.Buffer, sortKeys bool) *bytes.Buffer {
+
+	var (
+		head bytes.Buffer
+		//body *bytes.Buffer
+		tail bytes.Buffer
+	)
 
 	// Try parsing JSONP.
 	if parts, err := ParseJSONP(body.Bytes()); err == nil {
@@ -55,17 +69,15 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	indent.Indent(indentedBody, i, "    ", opts.Sort)
+	indent.Indent(indentedBody, i, "    ", sortKeys)
 
-	// Write the buffer into the same file.
-	fo, err := os.Create(filename)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fo.Write(head.Bytes())
-	fo.Write(indentedBody.Bytes())
-	fo.Write(tail.Bytes())
-	fo.Close()
+	var result bytes.Buffer
+
+	result.Write(head.Bytes())
+	result.Write(indentedBody.Bytes())
+	result.Write(tail.Bytes())
+
+	return &result
 }
 
 func ParseJSONP(contents []byte) ([][]byte, error) {
