@@ -2,8 +2,23 @@ package main
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
+	"jsonfmt/util"
 	"testing"
 )
+
+func TestJSONFmt(t *testing.T) {
+
+	testBuf := util.ReadFile("testfiles/1_test.json")
+	resultBuf := JSONFmt(testBuf, false)
+	expectBuf := util.ReadFile("testfiles/1_expect.json")
+
+	err := compareBuffers(expectBuf, resultBuf)
+	if err != nil {
+		t.Error(err)
+	}
+}
 
 func TestParseJSONP1(t *testing.T) {
 
@@ -46,4 +61,28 @@ func TestParseJSONP3(t *testing.T) {
 			}
 		}
 	}
+}
+
+func compareBuffers(expectBuf *bytes.Buffer, resultBuf *bytes.Buffer) error {
+
+	// Trim newlines. TODO: determine if newlines should matter.
+	expectBytes := bytes.TrimRight(expectBuf.Bytes(), "\n")
+	resultBytes := bytes.TrimRight(resultBuf.Bytes(), "\n")
+
+	for i := 0; i < len(expectBytes); i++ {
+		if i > (len(resultBytes) - 1) {
+			fmt.Println(string(expectBytes))
+			fmt.Println(string(resultBytes))
+			return errors.New("Result doesn't match expected byte length!")
+		}
+		if expectBytes[i] != resultBytes[i] {
+			fmt.Println(string(expectBytes))
+			fmt.Println(string(resultBytes))
+			str := fmt.Sprintf("Expected \"%s\", got \"%s\" at byte %d",
+				string(expectBytes[i]), string(resultBytes[i]), i)
+			return errors.New(str)
+		}
+	}
+
+	return nil
 }
