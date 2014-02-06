@@ -1,5 +1,5 @@
 {
-    "foo1": "bar",
+    "foo": "bar",
     "boolean": true,
     "array": [
         "element1",
@@ -8,12 +8,17 @@
     ],
     "float": 3.14159,
     "map": {
-        "fruit": "apple",
-        "vegetables": [
-            "celery",
-            "lettuce",
-            "carrots"
-        ],
+        "fruits": {
+            "banana": 5,
+            "pineapple": 3,
+            "mango": 6,
+            "apple": 2
+        },
+        "vegetables": {
+            "celery": 10,
+            "lettuce": 20,
+            "carrots": 15
+        },
         "beverages": {
             "morning": "coffee",
             "lunch": "tea",
