@@ -71,18 +71,28 @@ func compareBuffers(expectBuf *bytes.Buffer, resultBuf *bytes.Buffer) error {
 
 	for i := 0; i < len(expectBytes); i++ {
 		if i > (len(resultBytes) - 1) {
-			fmt.Println(string(expectBytes))
-			fmt.Println(string(resultBytes))
+			if err := dumpBuffer("testfiles/_result.json", resultBuf); err != nil {
+				fmt.Println(err)
+			}
 			return errors.New("Result doesn't match expected byte length!")
 		}
 		if expectBytes[i] != resultBytes[i] {
-			fmt.Println(string(expectBytes))
-			fmt.Println(string(resultBytes))
+			if err := dumpBuffer("testfiles/.result.json", resultBuf); err != nil {
+				fmt.Println(err)
+			}
 			str := fmt.Sprintf("Expected \"%s\", got \"%s\" at byte %d",
 				string(expectBytes[i]), string(resultBytes[i]), i)
 			return errors.New(str)
 		}
 	}
 
+	return nil
+}
+
+func dumpBuffer(filename string, buf *bytes.Buffer) error {
+	err := util.WriteFile(filename, buf);
+	if err != nil {
+		return err
+	}
 	return nil
 }
