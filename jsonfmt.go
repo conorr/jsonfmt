@@ -53,7 +53,7 @@ func JSONFmt(body *bytes.Buffer, sortKeys bool) *bytes.Buffer {
 	// Make a new buffer of indented JSON.
 	// TODO: need to initialize like this?
 	indentedBody := bytes.NewBufferString("")
-	obj, err := decode.RawInterfaceMap(body.Bytes())
+	obj, err := decode.DecodeJSON(body.Bytes())
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

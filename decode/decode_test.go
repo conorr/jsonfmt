@@ -5,7 +5,7 @@ import (
 	//"fmt"
 )
 
-func TestRawInterfaceMap(t *testing.T) {
+func TestDecodeJSON(t *testing.T) {
 
 	// Tests
 	tests := make(map[string]interface{})
@@ -14,7 +14,7 @@ func TestRawInterfaceMap(t *testing.T) {
 	tests["{\"foo\":3.14}"] = 3.14
 
 	for test, expect := range tests {
-		result, _ := RawInterfaceMap([]byte(test))
+		result, _ := DecodeJSON([]byte(test))
 		if result["foo"] != expect {
 			t.Errorf("Expected %s, got %s", expect, result["foo"])
 		}
@@ -22,7 +22,7 @@ func TestRawInterfaceMap(t *testing.T) {
 
 }
 
-func TestRawInterfaceMapArray(t *testing.T) {
+func TestDecodeJSONArray(t *testing.T) {
 
 	assertEqualInt := func(x int, y int) {
 		if x != y {
@@ -31,7 +31,7 @@ func TestRawInterfaceMapArray(t *testing.T) {
 	}
 
 	test := "{\"foo\":[1,2,3]}"
-	result, _ := RawInterfaceMap([]byte(test))
+	result, _ := DecodeJSON([]byte(test))
 
 	arr, ok := result["foo"].([]interface{})
 	if ok == false {
@@ -49,7 +49,7 @@ func TestRawInterfaceMapArray(t *testing.T) {
 
 }
 
-func TestRawInterfaceMapArray2(t *testing.T) {
+func TestDecodeJSONArray2(t *testing.T) {
 
 	assertEqualInt := func(x int, y int) {
 		if x != y {
@@ -58,7 +58,7 @@ func TestRawInterfaceMapArray2(t *testing.T) {
 	}
 
 	test := "{\"foo\":{\"bar\":[1,2,3]}}"
-	result, _ := RawInterfaceMap([]byte(test))
+	result, _ := DecodeJSON([]byte(test))
 
 	arr1, ok := result["foo"].(map[string]interface{})
 	if ok == false {
@@ -81,7 +81,7 @@ func TestRawInterfaceMapArray2(t *testing.T) {
 
 }
 
-func TestRawInterfaceMapErrors(t *testing.T) {
+func TestDecodeJSONErrors(t *testing.T) {
 
 	tests := []string{
 		"{\"foo\": \"bar}",
@@ -89,7 +89,7 @@ func TestRawInterfaceMapErrors(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		_, err := RawInterfaceMap([]byte(test))
+		_, err := DecodeJSON([]byte(test))
 		if err == nil {
 			t.Errorf("Expected error due to bad syntax")
 		}

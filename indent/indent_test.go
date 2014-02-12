@@ -33,9 +33,9 @@ func TestIndentEndtoEnd(t *testing.T) {
 	}
 	fi.Close()
 
-	obj, err := decode.RawInterfaceMap(bufIn.Bytes())
+	obj, err := decode.DecodeJSON(bufIn.Bytes())
 	if err != nil {
-		t.Errorf("RawInterfaceMap returned error; possible syntax error")
+		t.Errorf("DecodeJSON returned error; possible syntax error")
 		return
 	}
 	Indent(&bufOut, obj, "    ", false)

@@ -5,7 +5,7 @@ import (
 	"errors"
 )
 
-func RawInterfaceMap(bytes []byte) (map[string]interface{}, error) {
+func DecodeJSON(bytes []byte) (map[string]interface{}, error) {
 	obj := make(map[string]json.RawMessage)
 	err := json.Unmarshal(bytes, &obj)
 	if err != nil {
