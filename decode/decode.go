@@ -11,18 +11,18 @@ func DecodeJSON(bytes []byte) (map[string]interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	result, err := DecodeRawMessageMap(obj)
+	result, err := decodeRawMessageMap(obj)
 	if err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func DecodeRawMessageMap(obj map[string]json.RawMessage) (map[string]interface{}, error) {
+func decodeRawMessageMap(obj map[string]json.RawMessage) (map[string]interface{}, error) {
 	result := make(map[string]interface{})
 	var err error
 	for key, val := range obj {
-		result[key], err = DecodeRawMessage(val)
+		result[key], err = decodeRawMessage(val)
 		if err != nil {
 			return nil, err
 		}
@@ -30,7 +30,7 @@ func DecodeRawMessageMap(obj map[string]json.RawMessage) (map[string]interface{}
 	return result, nil
 }
 
-func DecodeRawMessage(obj json.RawMessage) (interface{}, error) {
+func decodeRawMessage(obj json.RawMessage) (interface{}, error) {
 
 	var (
 		_string  string
@@ -73,7 +73,7 @@ func DecodeRawMessage(obj json.RawMessage) (interface{}, error) {
 		if err == nil {
 			tmp := make([]interface{}, len(_arr))
 			for i, el := range _arr {
-				tmp[i], err = DecodeRawMessage(el)
+				tmp[i], err = decodeRawMessage(el)
 				if err != nil {
 					return nil, err
 				}
@@ -84,7 +84,7 @@ func DecodeRawMessage(obj json.RawMessage) (interface{}, error) {
 
 		err = json.Unmarshal(obj, &_obj)
 		if err == nil {
-			tmp, err := DecodeRawMessageMap(_obj)
+			tmp, err := decodeRawMessageMap(_obj)
 			if err != nil {
 				return nil, err
 			}
