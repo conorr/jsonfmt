@@ -3,8 +3,8 @@ package indent
 import (
 	"bytes"
 	"fmt"
-	"log"
 	"sort"
+	"errors"
 )
 
 type BufferWriter struct {
