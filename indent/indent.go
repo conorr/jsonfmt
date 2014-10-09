@@ -73,15 +73,14 @@ func indent(dst *bytes.Buffer, src interface{}, indentStr string, depth int, sor
 		writer.Writef("%s}", makeIndent(depth))
 
 	} else {
-		log.Fatal("Don't know what to do with it!")
+		return errors.New("Could not process interface")
 	}
 
 	return nil
 }
 
 // Given a map of type map[string]interface{}, return an array of its keys.
-// If sortKeys is true, the keys will be sorted alphabetically; otherwise they
-// will be in the order as discovered.
+// If sortKeys is true, sort the keys alphabetically.
 func getKeysArray(obj map[string]interface{}, sortKeys bool) []string {
 	arr := make([]string, len(obj))
 	i := 0
