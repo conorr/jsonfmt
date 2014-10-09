@@ -16,24 +16,35 @@ const JSONP_RE string = "(?s)^([\n]?[A-Za-z_0-9.]+[(]{1}[\n]?)(.*)([)]{1}[\n]?)$
 
 func main() {
 
-	var opts struct {
+	type Options struct {
 		Sort bool `short:"s" long:"sort" description:"Sort keys alphabetically"`
+		ReplaceFile bool `short:"r" long:"replace" description:"Replace file with its formatted version"`
+		Help bool `short:"h" long:"help" description:"Show help message and exit"`
+	}
+	var options Options
+
+	parser := flags.NewParser(&options, flags.PrintErrors)
+	parser.Usage = "[options] file"
+	args, _ := parser.Parse()
+
+	if (options.Help || len(args) != 1) {
+		parser.WriteHelp(os.Stdout)
+		os.Exit(0)
 	}
 
-	args, _ := flags.Parse(&opts)
-	if len(args) < 1 {
-		fmt.Println("Usage: jsonfmt [-s] [--sort] [file]")
-		os.Exit(1)
-	}
 	filename := args[0]
 
 	inBuf := util.ReadFile(filename)
-	outBuf := JSONFmt(inBuf, opts.Sort)
+	outBuf := JSONFmt(inBuf, options.Sort)
 
-	err := util.WriteFile(filename, outBuf)
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+	if options.ReplaceFile {
+		err := util.WriteFile(filename, outBuf)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+	} else {
+		fmt.Print(outBuf)
 	}
 }
 
