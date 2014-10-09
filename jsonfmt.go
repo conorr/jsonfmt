@@ -12,7 +12,7 @@ import (
 	"regexp"
 )
 
-const JSONP_RE string = "^([\n]?[A-Za-z_0-9.]+[(]{1})(.*)([)]|[)][\n]+)$"
+const JSONP_RE string = "(?s)^([\n]?[A-Za-z_0-9.]+[(]{1}[\n]?)(.*)([)]{1}[\n]?)$"
 
 func main() {
 
