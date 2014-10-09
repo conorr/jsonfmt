@@ -1,16 +1,17 @@
 jsonfmt
 =======
 
-A fast JSON formatting utility
+A formatting utility for JSON/JSONP
 ----
 
-`jsonfmt` takes a file containing JSON data and formats it.
+`jsonfmt` is a formatting utility for files containing JSON or JSONP data. Given a file, jsonfmt will 
+
+Given a file of JSON or JSONP, jsonfmt prints the indented form to stdout, where it can be piped into pager or a file.
 
 ```
 $ cat example.json
 {"fruits":["apple","orange","banana"],"veggies":["lettuce","carrots","celery"]}
 $ jsonfmt example.json
-$ cat example.json
 {
     "fruits": [
         "apple",
@@ -25,22 +26,27 @@ $ cat example.json
 }
 ```
 
-You can use the `--sort`/`-s` flag to sort keys alphabetically:
+If passed the `--sort`/`-s` flag, jsonfmt will sort keys alphabetically:
 
 ```
-$ cat fruits.json
-{"bananas":2,"apples":5,"pineapples":1,"mangoes":3}
-$ jsonfmt fruits.json --sort
-$ cat fruits.json
+$ jsonfmt --sort example.json
 {
-    "apples": 5,
-    "bananas": 2,
-    "mangoes": 3,
-    "pineapples": 1
+    "fruits": [
+        "apple",
+        "orange",
+        "banana"
+    ],
+    "veggies": [
+        "lettuce",
+        "carrots",
+        "celery"
+    ]
 }
 ```
 
-It also handles JSONP automatically. For example:
+If passed the `--replace`/`-r` flag, jsonfmt will overwrite the source file with its formatted version.
+
+jsonfmt automatically detects and handles JSONP. For example:
 
 ```
 $ cat example.js
