@@ -26,7 +26,7 @@ $ jsonfmt example.json
 }
 ```
 
-`jsonfmt` automatically detects and handles JSON data wrapped in a callback (JSONP). This is useful if you've saved off a large JSONP response from a server into a file:
+`jsonfmt` automatically detects and handles JSON data wrapped in a callback (JSONP). This is useful if you have a large JSONP response from a server that you've saved off in a file:
 
 ```
 $ cat example.json
@@ -41,7 +41,7 @@ SOME.CALLBACK({
 
 #### Options
 
-To format the file in-place by replacing it with its contents, use the `--replace`/`-r` option. Additionally, the `--sort`/`-s` flag can be used to recursively sort all keys alphabetically:
+The `--replace`/`-r` option can be used to format the file in-place by replacing it with its formatted contents. Additionally, the `--sort`/`-s` flag can be used to recursively sort all keys alphabetically:
 
 ```
 $ jsonfmt --sort example.json
