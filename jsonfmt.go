@@ -16,27 +16,40 @@ const JSONP_RE string = "(?s)^([\n]?[A-Za-z_0-9.]+[(]{1}[\n]?)(.*)([)]{1}[\n]?)$
 
 func main() {
 
+	// Set up parser options.
 	type Options struct {
 		Sort bool `short:"s" long:"sort" description:"Sort keys alphabetically"`
 		ReplaceFile bool `short:"r" long:"replace" description:"Replace file with its formatted version"`
-		Help bool `short:"h" long:"help" description:"Show help message and exit"`
+		Help bool `short:"h" long:"help" description:"Show this help message"`
+		Args struct {
+			Filename string
+		} `positional-args:"yes"`
 	}
 	var options Options
 
-	parser := flags.NewParser(&options, flags.PrintErrors)
-	parser.Usage = "[options] file"
-	args, _ := parser.Parse()
+	// Set up parser.
+	parser := flags.NewParser(nil, flags.PrintErrors)
+	parser.AddGroup("Options", "", &options)
+	parser.Usage = "[Options]"
 
-	if (options.Help || len(args) != 1) {
+	// Parse command-line options.
+	parser.Parse()
+
+	// Print help message if applicable.
+	if (options.Help || options.Args.Filename == "") {
 		parser.WriteHelp(os.Stdout)
 		os.Exit(0)
 	}
 
-	filename := args[0]
-
+	// Read the file into a buffer.
+	filename := options.Args.Filename
 	inBuf := util.ReadFile(filename)
+
+	// Format the buffer.
 	outBuf := JSONFmt(inBuf, options.Sort)
 
+	// Replace the file if the ReplaceFile option is true, otherwise print
+	// to stdout.
 	if options.ReplaceFile {
 		err := util.WriteFile(filename, outBuf)
 		if err != nil {
