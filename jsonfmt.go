@@ -18,10 +18,10 @@ func main() {
 
 	// Set up parser options.
 	type Options struct {
-		Sort bool `short:"s" long:"sort" description:"Sort keys alphabetically"`
+		Sort        bool `short:"s" long:"sort" description:"Sort keys alphabetically"`
 		ReplaceFile bool `short:"r" long:"replace" description:"Replace file with its formatted version"`
-		Help bool `short:"h" long:"help" description:"Show this help message"`
-		Args struct {
+		Help        bool `short:"h" long:"help" description:"Show this help message"`
+		Args        struct {
 			Filename string
 		} `positional-args:"yes"`
 	}
@@ -36,7 +36,7 @@ func main() {
 	parser.Parse()
 
 	// Print help message if applicable.
-	if (options.Help || options.Args.Filename == "") {
+	if options.Help || options.Args.Filename == "" {
 		parser.WriteHelp(os.Stdout)
 		os.Exit(0)
 	}
