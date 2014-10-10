@@ -6,7 +6,7 @@ A formatting utility for JSON
 
 `jsonfmt` is a formatting utility for files containing JSON data.
 
-Given a file, `jsonfmt` indents the data and writes it to stdout, where it can be piped into a pager or directed into a new file.
+Given a file, `jsonfmt` indents the data and writes it to stdout, where it can be piped to a pager or directed into a new file.
 
 ```
 $ cat example.json
@@ -26,7 +26,7 @@ $ jsonfmt example.json
 }
 ```
 
-`jsonfmt` automatically detects and handles JSON data wrapped in a JavaScript callback (JSONP). This is useful if you have a large JSONP response from a server that you've saved off in a file:
+`jsonfmt` automatically detects and handles JSON data wrapped in a JavaScript callback (JSONP). This is useful if you have a large JSONP response you've saved off in a file:
 
 ```
 $ cat jsonp_example.js
