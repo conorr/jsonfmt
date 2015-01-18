@@ -6,7 +6,7 @@ A formatting utility for JSON
 
 `jsonfmt` is a formatting utility for files containing JSON data.
 
-Given a file, `jsonfmt` formats the JSON data and writes it to stdout, where it can be piped to a pager or directed into a file.
+Given a file containing JSON or JSONP, `jsonfmt` formats it and writes it to stdout.
 
 ```
 $ cat example.json
@@ -48,20 +48,8 @@ SOME.CALLBACK({
 
 #### Options
 
-The `--replace`/`-r` option can be used to format the file in-place by replacing it with its formatted contents. Additionally, the `--sort`/`-s` flag can be used to recursively sort all keys alphabetically:
-
-```
-$ jsonfmt --sort example.json
-{
-    "fruits": [
-        "apple",
-        "banana",
-        "orange"
-    ],
-    "veggies": [
-        "carrots",
-        "celery",
-        "lettuce"
-    ]
-}
-```
+##### `--replace`/`-r`
+Format the file in-place by replacing it with its formatted contents.
+    
+##### `--sort`/`-s`
+Sort keys recursively by alphabet
